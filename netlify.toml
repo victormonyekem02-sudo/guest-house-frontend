@@ -5,34 +5,27 @@
 [build.environment]
   NODE_VERSION = "18"
 
+# Prevent caching of HTML files
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Pragma = "no-cache"
+    Expires = "0"
+
+# Allow caching of assets (they have unique names)
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
-# Handle asset files
-[[redirects]]
-  from = "/assets/*"
-  to = "/assets/:splat"
-  status = 200
-
-# API proxy (optional - for development)
 [[redirects]]
   from = "/api/*"
   to = "https://guest-house-backend-gx77.onrender.com/api/:splat"
   status = 200
   force = true
-
-# Health check
-[[redirects]]
-  from = "/health"
-  to = "https://guest-house-backend-gx77.onrender.com/health"
-  status = 200
-
-# Headers for security
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-XSS-Protection = "1; mode=block"
-    X-Content-Type-Options = "nosniff"
