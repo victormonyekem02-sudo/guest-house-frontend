@@ -14,7 +14,23 @@ import {
   Wind, CheckCircle, Clock, Home, User, Calendar, Phone, Mail, RefreshCw,
 } from 'lucide-react';
 
-const API = 'http://localhost:5000/api';
+const getBaseUrl = () => {
+  console.log('Current hostname:', window.location.hostname);
+  console.log('Current port:', window.location.port);
+  
+  if (window.location.hostname === 'localhost' || 
+      window.location.hostname === '127.0.0.1' ||
+      window.location.port === '3000' ||
+      window.location.port === '5173') {
+    console.log('Using LOCAL API:', 'http://localhost:5000/api');
+    return 'http://localhost:5000/api';
+  }
+  console.log('Using PRODUCTION API:', 'https://guesthouse-backend.onrender.com/api');
+  return 'https://guest-house-backend-gx77.onrender.com/api';
+};
+
+const BASE_URL = getBaseUrl();
+
 
 interface ServiceRequest {
   id: number;
@@ -57,7 +73,7 @@ export default function GuestPortal() {
   // Load requests from MySQL
   const fetchRequests = async () => {
     try {
-      const res = await fetch(`${API}/requests`);
+      const res = await fetch(`${BASE_URL}/requests`);
       const data = await res.json();
       if (Array.isArray(data)) {
         setMyRequests(data.filter((r: ServiceRequest) => r.room_number === guestInfo.roomNumber));
@@ -82,7 +98,7 @@ export default function GuestPortal() {
     setLoading(true);
     const formData = new FormData(e.currentTarget);
     try {
-      const res = await fetch(`${API}/requests`, {
+      const res = await fetch(`${BASE_URL}/requests`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

@@ -9,7 +9,22 @@ import { toast } from 'sonner';
 import logo from '../../assets/logocopy.jpg';
 import { Building2, Users, UserCircle } from 'lucide-react';
 
-const API = 'http://localhost:5000/api';
+const getBaseUrl = () => {
+  console.log('Current hostname:', window.location.hostname);
+  console.log('Current port:', window.location.port);
+  
+  if (window.location.hostname === 'localhost' || 
+      window.location.hostname === '127.0.0.1' ||
+      window.location.port === '3000' ||
+      window.location.port === '5173') {
+    console.log('Using LOCAL API:', 'http://localhost:5000/api');
+    return 'http://localhost:5000/api';
+  }
+  console.log('Using PRODUCTION API:', 'https://guesthouse-backend.onrender.com/api');
+  return 'https://guest-house-backend-gx77.onrender.com/api';
+};
+
+const BASE_URL = getBaseUrl();
 
 export default function Login() {
   const navigate = useNavigate();
@@ -24,7 +39,7 @@ export default function Login() {
   const handleLogin = async (username: string, password: string, expectedRole: string) => {
     setLoading(true);
     try {
-      const res = await fetch(`${API}/auth/login`, {
+      const res = await fetch(`${BASE_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),

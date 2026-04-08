@@ -12,7 +12,23 @@ import {
   FileText, AlertCircle, User, RefreshCw,
 } from 'lucide-react';
 
-const API = 'http://localhost:5000/api';
+const getBaseUrl = () => {
+  console.log('Current hostname:', window.location.hostname);
+  console.log('Current port:', window.location.port);
+  
+  if (window.location.hostname === 'localhost' || 
+      window.location.hostname === '127.0.0.1' ||
+      window.location.port === '3000' ||
+      window.location.port === '5173') {
+    console.log('Using LOCAL API:', 'http://localhost:5000/api');
+    return 'http://localhost:5000/api';
+  }
+  console.log('Using PRODUCTION API:', 'https://guesthouse-backend.onrender.com/api');
+  return 'https://guest-house-backend-gx77.onrender.com/api';
+};
+
+const BASE_URL = getBaseUrl();
+
 
 interface Task {
   id: number;
@@ -47,7 +63,7 @@ export default function StaffDashboard() {
   // ── Fetch tasks assigned to this staff member from MySQL ────────────────────
   const fetchTasks = async () => {
     try {
-      const res = await fetch(`${API}/requests/staff/${staffId}`);
+      const res = await fetch(`${BASE_URL}/requests/staff/${staffId}`);
       const data = await res.json();
       setTasks(Array.isArray(data) ? data : []);
     } catch {
@@ -70,7 +86,7 @@ export default function StaffDashboard() {
 
   const handleStartTask = async (taskId: number) => {
     try {
-      await fetch(`${API}/requests/${taskId}`, {
+      await fetch(`${BASE_URL}/requests/${taskId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'in_progress', assigned_to: staffId }),
@@ -82,13 +98,13 @@ export default function StaffDashboard() {
 
   const handleCompleteTask = async (taskId: number) => {
     try {
-      await fetch(`${API}/requests/${taskId}`, {
+      await fetch(`${BASE_URL}/requests/${taskId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'completed', assigned_to: staffId }),
       });
       // Log activity
-      await fetch(`${API}/activities`, {
+      await fetch(`${BASE_URL}/activities`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -106,7 +122,7 @@ export default function StaffDashboard() {
     e.preventDefault();
     if (!activityNote.trim()) { toast.error('Please enter activity details'); return; }
     try {
-      await fetch(`${API}/activities`, {
+      await fetch(`${BASE_URL}/activities`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

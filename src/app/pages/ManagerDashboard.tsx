@@ -17,7 +17,22 @@ import {
   Trash2, PlusCircle, UserCircle, RefreshCw, DoorClosed,
 } from 'lucide-react';
 
-const API = 'http://localhost:5000/api';
+const getBaseUrl = () => {
+  console.log('Current hostname:', window.location.hostname);
+  console.log('Current port:', window.location.port);
+  
+  if (window.location.hostname === 'localhost' || 
+      window.location.hostname === '127.0.0.1' ||
+      window.location.port === '3000' ||
+      window.location.port === '5173') {
+    console.log('Using LOCAL API:', 'http://localhost:5000/api');
+    return 'http://localhost:5000/api';
+  }
+  console.log('Using PRODUCTION API:', 'https://guesthouse-backend.onrender.com/api');
+  return 'https://guest-house-backend-gx77.onrender.com/api';
+};
+
+const BASE_URL = getBaseUrl();
 
 interface Staff { id: number; name: string; role: string; shift: string; status: string; phone: string; email: string; }
 interface Room { id: number; room_number: string; type: string; status: string; price: number; guest_name?: string; check_in?: string; check_out?: string; }
@@ -50,11 +65,11 @@ export default function ManagerDashboard() {
   const fetchAll = async () => {
     try {
       const [s, r, g, req, act] = await Promise.all([
-        fetch(`${API}/staff`).then(r => r.json()),
-        fetch(`${API}/rooms`).then(r => r.json()),
-        fetch(`${API}/guests`).then(r => r.json()),
-        fetch(`${API}/requests`).then(r => r.json()),
-        fetch(`${API}/activities`).then(r => r.json()),
+        fetch(`${BASE_URL}/staff`).then(r => r.json()),
+        fetch(`${BASE_URL}/rooms`).then(r => r.json()),
+        fetch(`${BASE_URL}/guests`).then(r => r.json()),
+        fetch(`${BASE_URL}/requests`).then(r => r.json()),
+        fetch(`${BASE_URL}/activities`).then(r => r.json()),
       ]);
       setStaff(Array.isArray(s) ? s : []);
       setRooms(Array.isArray(r) ? r : []);
@@ -85,7 +100,7 @@ export default function ManagerDashboard() {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
     try {
-      const res = await fetch(`${API}/staff`, {
+      const res = await fetch(`${BASE_URL}/staff`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -106,7 +121,7 @@ export default function ManagerDashboard() {
     if (!selectedStaff) return;
     const f = new FormData(e.currentTarget);
     try {
-      const res = await fetch(`${API}/staff/${selectedStaff.id}`, {
+      const res = await fetch(`${BASE_URL}/staff/${selectedStaff.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -125,7 +140,7 @@ export default function ManagerDashboard() {
   const handleDeleteStaff = async (id: number) => {
     if (!confirm('Delete this staff member?')) return;
     try {
-      await fetch(`${API}/staff/${id}`, { method: 'DELETE' });
+      await fetch(`${BASE_URL}/staff/${id}`, { method: 'DELETE' });
       toast.success('Staff deleted');
       fetchAll();
     } catch { toast.error('Failed to delete staff'); }
@@ -136,7 +151,7 @@ export default function ManagerDashboard() {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
     try {
-      const res = await fetch(`${API}/rooms`, {
+      const res = await fetch(`${BASE_URL}/rooms`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -157,7 +172,7 @@ export default function ManagerDashboard() {
     if (!selectedRoom) return;
     const f = new FormData(e.currentTarget);
     try {
-      const res = await fetch(`${API}/rooms/${selectedRoom.id}`, {
+      const res = await fetch(`${BASE_URL}/rooms/${selectedRoom.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -179,7 +194,7 @@ export default function ManagerDashboard() {
   const handleDeleteRoom = async (id: number) => {
     if (!confirm('Delete this room?')) return;
     try {
-      await fetch(`${API}/rooms/${id}`, { method: 'DELETE' });
+      await fetch(`${BASE_URL}/rooms/${id}`, { method: 'DELETE' });
       toast.success('Room deleted');
       fetchAll();
     } catch { toast.error('Failed to delete room'); }
@@ -187,7 +202,7 @@ export default function ManagerDashboard() {
 
   const handleUpdateRoomStatus = async (id: number, status: string, room: Room) => {
     try {
-      await fetch(`${API}/rooms/${id}`, {
+      await fetch(`${BASE_URL}/rooms/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...room, status }),
@@ -212,7 +227,7 @@ export default function ManagerDashboard() {
     const accessCode = roomNumber.toUpperCase();
 
     try {
-      const res = await fetch(`${API}/guests`, {
+      const res = await fetch(`${BASE_URL}/guests`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -240,7 +255,7 @@ export default function ManagerDashboard() {
     if (!selectedGuest) return;
     const f = new FormData(e.currentTarget);
     try {
-      const res = await fetch(`${API}/guests/${selectedGuest.id}`, {
+      const res = await fetch(`${BASE_URL}/guests/${selectedGuest.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -260,7 +275,7 @@ export default function ManagerDashboard() {
   const handleCheckOut = async (guest: Guest) => {
     if (!confirm(`Check out ${guest.name} from Room ${guest.room_number}? This will free the room and remove their login.`)) return;
     try {
-      await fetch(`${API}/guests/${guest.id}`, { method: 'DELETE' });
+      await fetch(`${BASE_URL}/guests/${guest.id}`, { method: 'DELETE' });
       toast.success(`${guest.name} checked out. Room ${guest.room_number} is now available.`);
       fetchAll();
     } catch { toast.error('Failed to check out guest'); }
@@ -269,7 +284,7 @@ export default function ManagerDashboard() {
   // ── REQUEST CRUD ────────────────────────────────────────────────────────────
   const handleAssignTask = async (requestId: number, staffMember: Staff) => {
     try {
-      await fetch(`${API}/requests/${requestId}`, {
+      await fetch(`${BASE_URL}/requests/${requestId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'in_progress', assigned_to: staffMember.id }),
@@ -281,7 +296,7 @@ export default function ManagerDashboard() {
 
   const handleCompleteTask = async (id: number) => {
     try {
-      await fetch(`${API}/requests/${id}`, {
+      await fetch(`${BASE_URL}/requests/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'completed' }),
@@ -294,7 +309,7 @@ export default function ManagerDashboard() {
   const handleDeleteRequest = async (id: number) => {
     if (!confirm('Delete this request?')) return;
     try {
-      await fetch(`${API}/requests/${id}`, { method: 'DELETE' });
+      await fetch(`${BASE_URL}/requests/${id}`, { method: 'DELETE' });
       toast.success('Request deleted');
       fetchAll();
     } catch { toast.error('Failed to delete request'); }
@@ -303,7 +318,7 @@ export default function ManagerDashboard() {
   const handleDeleteActivity = async (id: number) => {
     if (!confirm('Delete this activity?')) return;
     try {
-      await fetch(`${API}/activities/${id}`, { method: 'DELETE' });
+      await fetch(`${BASE_URL}/activities/${id}`, { method: 'DELETE' });
       toast.success('Activity deleted');
       fetchAll();
     } catch { toast.error('Failed to delete activity'); }

@@ -33,12 +33,12 @@
 
 ---
 
-## 🎯 Overview
+# Overview
 
 The Stone Guest House Management System (GHMS) is a modern, full-featured web application designed to streamline guest house operations. It provides dedicated portals for managers, staff members, and guests, enabling efficient management of:
 
-- 👥 **Staff Management** - Track employees, assign tasks, monitor performance
-- 🏨 **Room Management** - Monitor occupancy, update status, manage bookings
+Staff Management - Track employees, assign tasks, monitor performance
+-Room Management - Monitor occupancy, update status, manage bookings
 - 📋 **Service Requests** - Handle guest requests from submission to completion
 - 📊 **Analytics & Reporting** - Real-time statistics and activity tracking
 - 🔐 **Role-Based Access** - Secure, customized experiences for each user type

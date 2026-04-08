@@ -1,5 +1,20 @@
-const BASE_URL = 'http://localhost:5000/api';
+// In your api.ts or config file
+const getBaseUrl = () => {
+  console.log('Current hostname:', window.location.hostname);
+  console.log('Current port:', window.location.port);
+  
+  if (window.location.hostname === 'localhost' || 
+      window.location.hostname === '127.0.0.1' ||
+      window.location.port === '3000' ||
+      window.location.port === '5173') {
+    console.log('Using LOCAL API:', 'http://localhost:5000/api');
+    return 'http://localhost:5000/api';
+  }
+  console.log('Using PRODUCTION API:', 'https://guesthouse-backend.onrender.com/api');
+  return 'https://guest-house-backend-gx77.onrender.com/api';
+};
 
+const BASE_URL = getBaseUrl();
 // AUTH
 export const loginUser = async (username: string, password: string) => {
   const res = await fetch(`${BASE_URL}/auth/login`, {
