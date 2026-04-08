@@ -20,8 +20,8 @@ const getBaseUrl = () => {
     console.log('Using LOCAL API:', 'http://localhost:5000/api');
     return 'http://localhost:5000/api';
   }
-  console.log('Using PRODUCTION API:', 'https://guesthouse-backend.onrender.com');
-  return 'https://guest-house-backend-gx77.onrender.com';
+  console.log('Using PRODUCTION API:', 'https://guest-house-backend-gx77.onrender.com/api');
+  return 'https://guest-house-backend-gx77.onrender.com/api';
 };
 
 const BASE_URL = getBaseUrl();
