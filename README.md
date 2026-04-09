@@ -1,4 +1,4 @@
-# 🏨 The Stone Guest House Management System
+#  The Stone Guest House Management System
 
 <div align="center">
 
@@ -15,7 +15,7 @@
 
 ---
 
-## 📋 Table of Contents
+##  Table of Contents
 
 - [Overview](#-overview)
 - [Features](#-features)
@@ -39,23 +39,23 @@ The Stone Guest House Management System (GHMS) is a modern, full-featured web ap
 
 Staff Management - Track employees, assign tasks, monitor performance
 -Room Management - Monitor occupancy, update status, manage bookings
-- 📋 **Service Requests** - Handle guest requests from submission to completion
-- 📊 **Analytics & Reporting** - Real-time statistics and activity tracking
-- 🔐 **Role-Based Access** - Secure, customized experiences for each user type
+-  **Service Requests** - Handle guest requests from submission to completion
+-  **Analytics & Reporting** - Real-time statistics and activity tracking
+-  **Role-Based Access** - Secure, customized experiences for each user type
 
 ### Why This System?
 
-- **✅ Complete Workflow** - From guest check-in to service fulfillment
-- **✅ Real-Time Updates** - Instant status changes across all portals
-- **✅ User-Friendly** - Intuitive interface with minimal training needed
-- **✅ Scalable** - Built with modern technologies for easy expansion
-- **✅ Mobile Responsive** - Works on desktop, tablet, and mobile devices
+- ** Complete Workflow** - From guest check-in to service fulfillment
+- ** Real-Time Updates** - Instant status changes across all portals
+- ** User-Friendly** - Intuitive interface with minimal training needed
+- ** Scalable** - Built with modern technologies for easy expansion
+- ** Mobile Responsive** - Works on desktop, tablet, and mobile devices
 
 ---
 
-## ✨ Features
+##  Features
 
-### 👨‍💼 Manager Portal
+###  Manager Portal
 
 - **Dashboard Overview**
   - Real-time statistics (rooms, staff, requests)
@@ -84,7 +84,7 @@ Staff Management - Track employees, assign tasks, monitor performance
   - Task completion tracking
   - Request history
 
-### 👷 Staff Portal
+###  Staff Portal
 
 - **Task Dashboard**
   - Personal task queue
@@ -102,16 +102,16 @@ Staff Management - Track employees, assign tasks, monitor performance
   - Tasks assigned vs completed
   - Visual progress indicators
 
-### 🏨 Guest Portal
+###  Guest Portal
 
 - **Service Request System**
   - 6 service categories:
-    - 🍽️ Food Order
-    - ✨ Housekeeping
-    - 🔧 Maintenance
-    - 🧺 Laundry
-    - 🚗 Transport
-    - 🛍️ Extra Amenities
+    -  Food Order
+    -  Housekeeping
+    -  Maintenance
+    -  Laundry
+    -  Transport
+    -  Extra Amenities
   - Priority selection (Low/Medium/High)
   - Detailed description input
   - Real-time status tracking
@@ -130,7 +130,7 @@ Staff Management - Track employees, assign tasks, monitor performance
 
 ---
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 
@@ -163,7 +163,7 @@ npm run dev
 
 ---
 
-## 🔐 Demo Credentials
+##  Demo Credentials
 
 ### Manager Access
 - **Username:** `manager`
@@ -182,23 +182,23 @@ npm run dev
 
 ---
 
-## 🏗️ System Architecture
+##  System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                     Frontend (React)                     │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐  │
-│  │   Manager    │  │    Staff     │  │    Guest     │  │
-│  │  Dashboard   │  │  Dashboard   │  │   Portal     │  │
-│  └──────────────┘  └──────────────┘  └──────────────┘  │
-│                          │                               │
+│                     Frontend (React)                    │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐   │
+│  │   Manager    │  │    Staff     │  │    Guest     │   │
+│  │  Dashboard   │  │  Dashboard   │  │   Portal     │   │
+│  └──────────────┘  └──────────────┘  └──────────────┘   │
+│                          │                              │
 │                  ┌───────┴────────┐                     │
-│                  │  React Router   │                     │
+│                  │  React Router   │                    |
 │                  └───────┬────────┘                     │
-│                          │                               │
+│                          │                              │
 │                  ┌───────┴────────┐                     │
-│                  │  State (Demo)   │                     │
-│                  │   Mock Data     │                     │
+│                  │  State (Demo)   │                    │
+│                  │   Mock Data     │                    │
 │                  └────────────────┘                     │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -215,7 +215,7 @@ Update Status → Completed → Notify Guest
 
 ---
 
-## 📚 Documentation
+##  Documentation
 
 Comprehensive documentation is available in the following files:
 
@@ -229,15 +229,15 @@ Comprehensive documentation is available in the following files:
 
 ### Quick Links
 
-- 🚀 [Installation Guide](SETUP_INSTRUCTIONS.md#step-by-step-setup-instructions)
-- 🔧 [Troubleshooting](TROUBLESHOOTING.md)
-- 📖 [API Documentation](SYSTEM_DOCUMENTATION.md#-data-structure)
-- 🎨 [UI Components](SYSTEM_DOCUMENTATION.md#-user-interface-design)
-- 🔄 [Workflows](SYSTEM_DOCUMENTATION.md#-system-workflows)
+-  [Installation Guide](SETUP_INSTRUCTIONS.md#step-by-step-setup-instructions)
+-  [Troubleshooting](TROUBLESHOOTING.md)
+-  [API Documentation](SYSTEM_DOCUMENTATION.md#-data-structure)
+-  [UI Components](SYSTEM_DOCUMENTATION.md#-user-interface-design)
+-  [Workflows](SYSTEM_DOCUMENTATION.md#-system-workflows)
 
 ---
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
 ### Frontend
 - **React 18.3.1** - UI library
@@ -258,7 +258,7 @@ Comprehensive documentation is available in the following files:
 
 ---
 
-## 📸 Screenshots
+##  Screenshots
 
 ### Login Page
 Beautiful multi-role login with The Stone Guest House branding
@@ -285,7 +285,7 @@ Beautiful multi-role login with The Stone Guest House branding
 
 ---
 
-## 💻 Development
+##  Development
 
 ### Project Structure
 
@@ -295,7 +295,7 @@ stone-guesthouse/
 │   ├── app/
 │   │   ├── components/
 │   │   │   ├── ui/              # Reusable UI components
-│   │   │   └── figma/           # Figma-specific components
+│   │   │   └── f /           
 │   │   ├── pages/
 │   │   │   ├── Login.tsx        # Login page
 │   │   │   ├── ManagerDashboard.tsx
@@ -340,7 +340,7 @@ VITE_API_KEY=your_api_key
 
 ---
 
-## 🚀 Deployment
+##  Deployment
 
 ### Build for Production
 
@@ -406,11 +406,11 @@ Output will be in the `dist` folder.
 - Clear browser cookies
 - Check browser console for errors
 
-👉 **See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for complete solutions**
+ **See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for complete solutions**
 
 ---
 
-## 🧪 Testing the System
+##  Testing the System
 
 ### Complete Workflow Test
 
@@ -433,18 +433,18 @@ Output will be in the `dist` folder.
    - Check request status (should be Completed)
    - View in request history
 
-✅ **If this workflow completes successfully, the system is working correctly!**
+ **If this workflow completes successfully, the system is working correctly!**
 
 ---
 
-## 📊 Features Roadmap
+##  Features Roadmap
 
 ### Phase 1 - Current (Demo)
-- ✅ Multi-role authentication
-- ✅ Manager dashboard
-- ✅ Staff task management
-- ✅ Guest service requests
-- ✅ Real-time status updates (in-memory)
+-  Multi-role authentication
+-  Manager dashboard
+-  Staff task management
+-  Guest service requests
+-  Real-time status updates (in-memory)
 
 ### Phase 2 - Backend Integration
 - [ ] Database connection (PostgreSQL/MongoDB)
@@ -469,7 +469,7 @@ Output will be in the `dist` folder.
 
 ---
 
-## 🤝 Contributing
+##  Contributing
 
 Contributions are welcome! Here's how you can help:
 
@@ -491,7 +491,7 @@ Contributions are welcome! Here's how you can help:
 
 ---
 
-## 📄 License
+##  License
 
 This project is licensed under the MIT License.
 
@@ -521,14 +521,14 @@ SOFTWARE.
 
 ---
 
-## 🆘 Support
+##  Support
 
 ### Documentation
-- 📖 [Setup Instructions](SETUP_INSTRUCTIONS.md)
-- 🚀 [Quick Start Guide](QUICK_START.md)
-- 🔧 [Troubleshooting](TROUBLESHOOTING.md)
-- 👁️ [Visual Guide](VISUAL_GUIDE.md)
-- 📚 [System Documentation](SYSTEM_DOCUMENTATION.md)
+-  [Setup Instructions](SETUP_INSTRUCTIONS.md)
+-  [Quick Start Guide](QUICK_START.md)
+-  [Troubleshooting](TROUBLESHOOTING.md)
+-  [Visual Guide](VISUAL_GUIDE.md)
+-  [System Documentation](SYSTEM_DOCUMENTATION.md)
 
 ### Getting Help
 1. Check the [Troubleshooting Guide](TROUBLESHOOTING.md)
@@ -541,7 +541,7 @@ SOFTWARE.
 
 ---
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 - **Tailwind CSS** - For the amazing utility-first CSS framework
 - **Radix UI** - For accessible component primitives
@@ -551,20 +551,20 @@ SOFTWARE.
 
 ---
 
-## 📞 Contact
+##  Contact
 
 For questions, suggestions, or support:
-- 📧 Email: support@stoneguesthouse.com
-- 🌐 Website: www.stoneguesthouse.com
-- 💬 Discord: [Join our community](#)
+-  Email: support@stoneguesthouse.com
+-  Website: www.stoneguesthouse.com
+-  Discord: [Join our community](#)
 
 ---
 
 <div align="center">
 
-**Made with ❤️ for The Stone Guest House**
+**Made with  for The Stone Guest House**
 
-⭐ Star this repo if you find it helpful!
+ Star this repo if you find it helpful!
 
 [Back to Top](#-the-stone-guest-house-management-system)
 
