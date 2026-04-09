@@ -34,7 +34,7 @@ const getBaseUrl = () => {
 
 const BASE_URL = getBaseUrl();
 
-interface Staff { id: number; name: string; role: string; shift: string; status: string; phone: string; email: string; }
+interface Staff { id: number; name: string; role: string; shift: string; status: string; phone: string; email: string; username?: string; }
 interface Room { id: number; room_number: string; type: string; status: string; price: number; guest_name?: string; check_in?: string; check_out?: string; }
 interface Guest { id: number; name: string; room_number: string; check_in: string; check_out: string; phone: string; email: string; access_code: string; }
 interface Request { id: number; room_number: string; type: string; description: string; priority: string; status: string; assigned_to?: number; guest_name?: string; staff_name?: string; created_at: string; completed_at?: string; }
@@ -99,21 +99,37 @@ export default function ManagerDashboard() {
   const handleAddStaff = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const f = new FormData(e.currentTarget);
+    const username = f.get('username') as string;
+    const password = f.get('password') as string || 'P@ssw0rd';
+    
+    if (!username) {
+      toast.error('Username is required for staff login');
+      return;
+    }
+    
     try {
       const res = await fetch(`${BASE_URL}/staff`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: f.get('name'), role: f.get('role'), shift: f.get('shift'),
-          phone: f.get('phone'), email: f.get('email'), status: 'active',
+          name: f.get('name'), 
+          role: f.get('role'), 
+          shift: f.get('shift'),
+          phone: f.get('phone'), 
+          email: f.get('email'), 
+          status: 'active',
+          username: username,
+          password: password,
         }),
       });
       if (!res.ok) throw new Error();
-      toast.success('Staff member added');
+      toast.success(`Staff added! Login: ${username} / ${password}`);
       setIsAddStaffOpen(false);
       (e.target as HTMLFormElement).reset();
       fetchAll();
-    } catch { toast.error('Failed to add staff member'); }
+    } catch { 
+      toast.error('Failed to add staff member'); 
+    }
   };
 
   const handleEditStaff = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -127,6 +143,7 @@ export default function ManagerDashboard() {
         body: JSON.stringify({
           name: f.get('name'), role: f.get('role'), shift: f.get('shift'),
           phone: f.get('phone'), email: f.get('email'), status: selectedStaff.status,
+          username: f.get('username'), password: f.get('password') || undefined,
         }),
       });
       if (!res.ok) throw new Error();
@@ -223,7 +240,6 @@ export default function ManagerDashboard() {
     const phone = f.get('phone') as string;
     const email = f.get('email') as string;
 
-    // Auto-generate access code from room number
     const accessCode = roomNumber.toUpperCase();
 
     try {
@@ -346,10 +362,9 @@ export default function ManagerDashboard() {
     'low': 'bg-green-100 text-green-800 border-green-300',
   }[p?.toLowerCase()] || 'bg-gray-100 text-gray-800 border-gray-300');
 
-  // ── AVAILABLE ROOMS for check-in dropdown ───────────────────────────────────
   const availableRooms = rooms.filter(r => r.status === 'available');
 
-  // ── FORM FIELDS ─────────────────────────────────────────────────────────────
+  // ── FORM FIELDS with Username & Password ─────────────────────────────────────
   const StaffFormFields = ({ d }: { d?: Staff }) => (<>
     <div><Label className="text-black">Full Name</Label><Input name="name" defaultValue={d?.name} required className="border-amber-300" /></div>
     <div><Label className="text-black">Role</Label>
@@ -375,6 +390,14 @@ export default function ManagerDashboard() {
     </div>
     <div><Label className="text-black">Phone</Label><Input name="phone" defaultValue={d?.phone} className="border-amber-300" /></div>
     <div><Label className="text-black">Email</Label><Input name="email" type="email" defaultValue={d?.email} className="border-amber-300" /></div>
+    <div><Label className="text-black">System Username *</Label>
+      <Input name="username" placeholder="e.g., john.doe" defaultValue={d?.username} required className="border-amber-300" />
+      <p className="text-xs text-gray-500 mt-1">Staff will use this to log in</p>
+    </div>
+    <div><Label className="text-black">System Password</Label>
+      <Input name="password" type="text" placeholder="Leave empty for default: P@ssw0rd" className="border-amber-300" />
+      <p className="text-xs text-gray-500 mt-1">Default password: P@ssw0rd</p>
+    </div>
   </>);
 
   const RoomFormFields = ({ d }: { d?: Room }) => (<>
@@ -421,7 +444,7 @@ export default function ManagerDashboard() {
             <img src={logo} alt="The Stone Guest House" className="h-12" />
             <div>
               <h1 className="text-2xl font-bold text-black">Manager Dashboard</h1>
-              <p className="text-sm text-gray-600">The Stone Guest House — Live MySQL Data</p>
+              <p className="text-sm text-gray-600">The Stone Guest House — Live Data</p>
             </div>
           </div>
           <div className="flex gap-2">
@@ -456,7 +479,7 @@ export default function ManagerDashboard() {
             </TabsTrigger>
           </TabsList>
 
-          {/* OVERVIEW */}
+          {/* OVERVIEW - same as before */}
           <TabsContent value="overview" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card className="border-amber-200 shadow-md">
@@ -515,10 +538,9 @@ export default function ManagerDashboard() {
             </div>
           </TabsContent>
 
-          {/* CHECK IN / OUT */}
+          {/* CHECK IN / OUT - same as before */}
           <TabsContent value="checkin">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Check In Form */}
               <Card className="border-amber-200 shadow-md">
                 <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50">
                   <div className="flex items-center justify-between">
@@ -531,54 +553,31 @@ export default function ManagerDashboard() {
                 </CardHeader>
                 <CardContent className="pt-6">
                   <form onSubmit={handleCheckIn} className="space-y-4">
-                    <div>
-                      <Label className="text-black font-medium">Guest Full Name *</Label>
-                      <Input name="name" placeholder="e.g. Thabo Mokoena" required className="border-amber-300" />
-                    </div>
-                    <div>
-                      <Label className="text-black font-medium">Assign Room *</Label>
+                    <div><Label className="text-black font-medium">Guest Full Name *</Label><Input name="name" placeholder="e.g. Thabo Mokoena" required className="border-amber-300" /></div>
+                    <div><Label className="text-black font-medium">Assign Room *</Label>
                       <Select name="room_number" required>
                         <SelectTrigger className="border-amber-300"><SelectValue placeholder="Select available room..." /></SelectTrigger>
                         <SelectContent>
-                          {availableRooms.map(r => (
-                            <SelectItem key={r.id} value={r.room_number}>
-                              Room {r.room_number} — {r.type} (M{r.price}/night)
-                            </SelectItem>
-                          ))}
+                          {availableRooms.map(r => (<SelectItem key={r.id} value={r.room_number}>Room {r.room_number} — {r.type} (M{r.price}/night)</SelectItem>))}
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <Label className="text-black font-medium">Check-In Date *</Label>
-                        <Input name="check_in" type="date" required className="border-amber-300" defaultValue={new Date().toISOString().split('T')[0]} />
-                      </div>
-                      <div>
-                        <Label className="text-black font-medium">Check-Out Date *</Label>
-                        <Input name="check_out" type="date" required className="border-amber-300" />
-                      </div>
+                      <div><Label className="text-black font-medium">Check-In Date *</Label><Input name="check_in" type="date" required className="border-amber-300" defaultValue={new Date().toISOString().split('T')[0]} /></div>
+                      <div><Label className="text-black font-medium">Check-Out Date *</Label><Input name="check_out" type="date" required className="border-amber-300" /></div>
                     </div>
-                    <div>
-                      <Label className="text-black font-medium">Phone Number</Label>
-                      <Input name="phone" placeholder="+266 XXXX XXXX" className="border-amber-300" />
-                    </div>
-                    <div>
-                      <Label className="text-black font-medium">Email Address</Label>
-                      <Input name="email" type="email" placeholder="guest@email.com" className="border-amber-300" />
-                    </div>
+                    <div><Label className="text-black font-medium">Phone Number</Label><Input name="phone" placeholder="+266 XXXX XXXX" className="border-amber-300" /></div>
+                    <div><Label className="text-black font-medium">Email Address</Label><Input name="email" type="email" placeholder="guest@email.com" className="border-amber-300" /></div>
                     <div className="p-3 bg-amber-50 rounded-lg border border-amber-200">
                       <p className="text-xs text-amber-800 font-medium">ℹ️ Login credentials for guest:</p>
                       <p className="text-xs text-amber-700">Access Code: <strong>Room number (e.g. G01)</strong></p>
                       <p className="text-xs text-amber-700">Password: <strong>12345678</strong></p>
                     </div>
-                    <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white text-base py-3">
-                      <DoorOpen className="w-5 h-5 mr-2" />Check In Guest
-                    </Button>
+                    <Button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white text-base py-3"><DoorOpen className="w-5 h-5 mr-2" />Check In Guest</Button>
                   </form>
                 </CardContent>
               </Card>
 
-              {/* Currently Checked In Guests */}
               <Card className="border-amber-200 shadow-md">
                 <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50">
                   <CardTitle className="text-black flex items-center gap-2"><UserCircle className="w-5 h-5 text-red-600" />Currently Checked In</CardTitle>
@@ -587,10 +586,7 @@ export default function ManagerDashboard() {
                 <CardContent className="pt-6">
                   <div className="space-y-4">
                     {guests.length === 0 ? (
-                      <div className="text-center py-8 text-gray-500">
-                        <UserCircle className="w-12 h-12 mx-auto mb-2 text-gray-400" />
-                        <p>No guests currently checked in</p>
-                      </div>
+                      <div className="text-center py-8 text-gray-500"><UserCircle className="w-12 h-12 mx-auto mb-2 text-gray-400" /><p>No guests currently checked in</p></div>
                     ) : (
                       guests.map(g => (
                         <Card key={g.id} className="border-amber-200">
@@ -608,14 +604,8 @@ export default function ManagerDashboard() {
                               </div>
                             </div>
                             <div className="flex gap-2 mt-3">
-                              <Button variant="outline" size="sm" className="border-amber-300 text-amber-700 flex-1"
-                                onClick={() => { setSelectedGuest(g); setIsEditGuestOpen(true); }}>
-                                <Pencil className="w-3 h-3 mr-1" />Edit
-                              </Button>
-                              <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white flex-1"
-                                onClick={() => handleCheckOut(g)}>
-                                <DoorClosed className="w-3 h-3 mr-1" />Check Out
-                              </Button>
+                              <Button variant="outline" size="sm" className="border-amber-300 text-amber-700 flex-1" onClick={() => { setSelectedGuest(g); setIsEditGuestOpen(true); }}><Pencil className="w-3 h-3 mr-1" />Edit</Button>
+                              <Button size="sm" className="bg-red-600 hover:bg-red-700 text-white flex-1" onClick={() => handleCheckOut(g)}><DoorClosed className="w-3 h-3 mr-1" />Check Out</Button>
                             </div>
                           </CardContent>
                         </Card>
@@ -626,7 +616,6 @@ export default function ManagerDashboard() {
               </Card>
             </div>
 
-            {/* Edit Guest Dialog */}
             <Dialog open={isEditGuestOpen} onOpenChange={setIsEditGuestOpen}>
               <DialogContent>
                 <DialogHeader><DialogTitle>Edit Guest Details</DialogTitle><DialogDescription>Update guest information</DialogDescription></DialogHeader>
@@ -647,15 +636,15 @@ export default function ManagerDashboard() {
             </Dialog>
           </TabsContent>
 
-          {/* STAFF */}
+          {/* STAFF TAB with Username/Password */}
           <TabsContent value="staff">
             <Card className="border-amber-200 shadow-md">
               <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50">
                 <div className="flex items-center justify-between">
-                  <div><CardTitle className="text-black">Staff Directory</CardTitle><CardDescription>Manage your team members</CardDescription></div>
+                  <div><CardTitle className="text-black">Staff Directory</CardTitle><CardDescription>Manage your team members and their login credentials</CardDescription></div>
                   <Dialog open={isAddStaffOpen} onOpenChange={setIsAddStaffOpen}>
                     <DialogTrigger asChild><Button className="bg-red-600 hover:bg-red-700 text-white"><UserPlus className="w-4 h-4 mr-2" />Add Staff</Button></DialogTrigger>
-                    <DialogContent><DialogHeader><DialogTitle>Add New Staff Member</DialogTitle><DialogDescription>Enter staff member details</DialogDescription></DialogHeader>
+                    <DialogContent><DialogHeader><DialogTitle>Add New Staff Member</DialogTitle><DialogDescription>Enter staff details and system login credentials</DialogDescription></DialogHeader>
                       <form onSubmit={handleAddStaff} className="space-y-4"><StaffFormFields /><Button type="submit" className="w-full bg-red-600 hover:bg-red-700 text-white">Add Staff Member</Button></form>
                     </DialogContent>
                   </Dialog>
@@ -663,7 +652,7 @@ export default function ManagerDashboard() {
               </CardHeader>
               <CardContent className="pt-6">
                 <Table>
-                  <TableHeader><TableRow className="border-amber-200"><TableHead>ID</TableHead><TableHead>Name</TableHead><TableHead>Role</TableHead><TableHead>Shift</TableHead><TableHead>Status</TableHead><TableHead>Contact</TableHead><TableHead>Actions</TableHead></TableRow></TableHeader>
+                  <TableHeader><TableRow className="border-amber-200"><TableHead>ID</TableHead><TableHead>Name</TableHead><TableHead>Role</TableHead><TableHead>Shift</TableHead><TableHead>Status</TableHead><TableHead>Username</TableHead><TableHead>Contact</TableHead><TableHead>Actions</TableHead></TableRow></TableHeader>
                   <TableBody>
                     {staff.map(m => (
                       <TableRow key={m.id} className="border-amber-100">
@@ -672,6 +661,7 @@ export default function ManagerDashboard() {
                         <TableCell><Badge variant="outline" className="border-amber-300">{m.role}</Badge></TableCell>
                         <TableCell>{m.shift}</TableCell>
                         <TableCell><Badge className={getStatusColor(m.status)}>{m.status}</Badge></TableCell>
+                        <TableCell><code className="text-xs bg-gray-100 px-2 py-1 rounded">{m.username || '—'}</code></TableCell>
                         <TableCell className="text-sm text-gray-700"><div>{m.phone}</div><div className="text-xs">{m.email}</div></TableCell>
                         <TableCell><div className="flex gap-2">
                           <Button variant="outline" size="sm" className="border-amber-300 text-amber-700" onClick={() => { setSelectedStaff(m); setIsEditStaffOpen(true); }}><Pencil className="w-3 h-3" /></Button>
@@ -684,13 +674,13 @@ export default function ManagerDashboard() {
               </CardContent>
             </Card>
             <Dialog open={isEditStaffOpen} onOpenChange={setIsEditStaffOpen}>
-              <DialogContent><DialogHeader><DialogTitle>Edit Staff Member</DialogTitle><DialogDescription>Update staff member details</DialogDescription></DialogHeader>
+              <DialogContent><DialogHeader><DialogTitle>Edit Staff Member</DialogTitle><DialogDescription>Update staff member details and login credentials</DialogDescription></DialogHeader>
                 {selectedStaff && <form onSubmit={handleEditStaff} className="space-y-4"><StaffFormFields d={selectedStaff} /><Button type="submit" className="w-full bg-red-600 hover:bg-red-700 text-white">Save Changes</Button></form>}
               </DialogContent>
             </Dialog>
           </TabsContent>
 
-          {/* ROOMS */}
+          {/* ROOMS - same as before */}
           <TabsContent value="rooms">
             <Card className="border-amber-200 shadow-md">
               <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50">
@@ -720,12 +710,7 @@ export default function ManagerDashboard() {
                       </CardHeader>
                       <CardContent>
                         <p className="text-sm font-medium mb-1">{room.type} — M{room.price}/night</p>
-                        {room.guest_name && (
-                          <div className="text-xs text-gray-700 mb-2">
-                            <p className="font-medium">👤 {room.guest_name}</p>
-                            <p>In: {room.check_in} | Out: {room.check_out}</p>
-                          </div>
-                        )}
+                        {room.guest_name && (<div className="text-xs text-gray-700 mb-2"><p className="font-medium">👤 {room.guest_name}</p><p>In: {room.check_in} | Out: {room.check_out}</p></div>)}
                         <Select value={room.status} onValueChange={v => handleUpdateRoomStatus(room.id, v, room)}>
                           <SelectTrigger className="w-full mt-1 border-amber-300 text-sm"><SelectValue /></SelectTrigger>
                           <SelectContent>
@@ -748,7 +733,7 @@ export default function ManagerDashboard() {
             </Dialog>
           </TabsContent>
 
-          {/* REQUESTS */}
+          {/* REQUESTS - same as before */}
           <TabsContent value="requests">
             <Card className="border-amber-200 shadow-md">
               <CardHeader className="bg-gradient-to-r from-amber-50 to-orange-50"><CardTitle className="text-black">All Service Requests</CardTitle><CardDescription>Manage and assign all guest service requests</CardDescription></CardHeader>
@@ -778,16 +763,8 @@ export default function ManagerDashboard() {
                               <SelectContent>{staff.map(s => <SelectItem key={s.id} value={String(s.id)}>{s.name} — {s.role} ({s.shift} shift)</SelectItem>)}</SelectContent>
                             </Select>
                           )}
-                          {req.status === 'in_progress' && (
-                            <Button onClick={() => handleCompleteTask(req.id)} className="bg-green-600 hover:bg-green-700 text-white">
-                              <CheckCircle className="w-4 h-4 mr-2" />Mark Completed
-                            </Button>
-                          )}
-                          {req.status === 'completed' && (
-                            <div className="flex items-center text-green-600">
-                              <CheckCircle className="w-4 h-4 mr-2" /><span className="text-sm">Completed</span>
-                            </div>
-                          )}
+                          {req.status === 'in_progress' && (<Button onClick={() => handleCompleteTask(req.id)} className="bg-green-600 hover:bg-green-700 text-white"><CheckCircle className="w-4 h-4 mr-2" />Mark Completed</Button>)}
+                          {req.status === 'completed' && (<div className="flex items-center text-green-600"><CheckCircle className="w-4 h-4 mr-2" /><span className="text-sm">Completed</span></div>)}
                         </div>
                       </CardContent>
                     </Card>
