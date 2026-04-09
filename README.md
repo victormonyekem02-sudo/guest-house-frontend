@@ -45,11 +45,11 @@ Role-Based Access - Secure, customized experiences for each user type
 
 ### Why This System?
 
-- ** Complete Workflow** - From guest check-in to service fulfillment
-- ** Real-Time Updates** - Instant status changes across all portals
-- ** User-Friendly** - Intuitive interface with minimal training needed
-- ** Scalable** - Built with modern technologies for easy expansion
-- ** Mobile Responsive** - Works on desktop, tablet, and mobile devices
+- Complete Workflow - From guest check-in to service fulfillment
+- Real-Time Updates - Instant status changes across all portals
+- User-Friendly - Intuitive interface with minimal training needed
+- Scalable - Built with modern technologies for easy expansion
+- Mobile Responsive - Works on desktop, tablet, and mobile devices
 
 ---
 
